@@ -4,13 +4,13 @@ import {
   Param,
   Delete,
   HttpCode,
-  HttpStatus
+  HttpStatus,
 } from '@nestjs/common';
 
 import User from 'src/database/models/users';
 import { UsersService } from './user.service';
 
-@Controller('users')
+@Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

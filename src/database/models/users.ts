@@ -1,6 +1,7 @@
 import { Column, Model, Table, PrimaryKey, Default, BeforeCreate } from 'sequelize-typescript';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
+import { userRole } from 'src/helpers/userRoles';
 
 @Table  
 export class User extends Model {
@@ -12,11 +13,15 @@ export class User extends Model {
   @Column
   name: string;
 
+  @Default(userRole.user)
   @Column
   role: string;
 
   @Column
   email: string;
+
+  @Column
+  phone: string;
 
   @Column
   password: string;

@@ -5,7 +5,8 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import User from './database/models/users';
 import { UsersModule } from './modules/users/user.module';
-
+import { AuthModule } from './modules/auth/auth.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -24,9 +25,22 @@ import { UsersModule } from './modules/users/user.module';
       autoLoadModels: true,
       synchronize: true,
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.ukr.net',
+        port: 465,
+        secure: true,
+        auth: {
+          user: process.env.MAIL_SENDER,
+          pass: process.env.MAIL_PASSWORD,
+        },
+      },
+    }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [AppService]
 })
 export class AppModule {}
