@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -8,12 +10,12 @@ import {
   Patch,
   Post,
   Request,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { PostsService } from './posts.service';
 import PostModel from 'src/database/models/posts';
 import { UpdatePostDto } from './dtos/update-post-dto';
+import { Public } from 'src/guards/auth.guard';
 import User from 'src/database/models/users';
 import { userRole } from 'src/helpers/userRoles';
 
@@ -32,6 +34,7 @@ export class PostsController {
     return await this.postService.createPost(createPostDto, authorId);
   }
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Get('')
   async getPosts(): Promise<PostModel[]> {
@@ -46,12 +49,31 @@ export class PostsController {
     @Request() req,
   ) {
     const requestUserId = req.user.sub;
-    const user = await User.findByPk(requestUserId);
     const postToUpdate = await PostModel.findByPk(id);
 
-    if (user.role !== userRole.admin || postToUpdate.author !== requestUserId) {
-      throw new UnauthorizedException('You`re not creator or admin to do this');
+    if (postToUpdate.author !== requestUserId) {
+      throw new ForbiddenException('You`re not creator to do this');
     }
     return await this.postService.updatePost(id, updatePostDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Delete(':id')
+  async deletePostById(
+    @Param('id') id: string,
+    @Request() req,
+  ) {
+    const requestUserId = req.user.sub;
+    const user = await User.findByPk(requestUserId);
+    const postToDelete = await PostModel.findByPk(id);
+
+    console.log(user.id)
+    console.log(postToDelete.author)
+
+    if (postToDelete.author !== user.id && user.role !== userRole.admin) {
+      throw new ForbiddenException('You`re not creator or admin to do this');
+    }
+
+    return await this.postService.deletePost(id, requestUserId);
   }
 }
