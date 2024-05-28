@@ -32,9 +32,6 @@ export class PostsService {
 
     if (postToUpdate) {
       Object.assign(postToUpdate, updatedFields);
-
-      console.log(postToUpdate);
-
       await postToUpdate.save();
     }
 

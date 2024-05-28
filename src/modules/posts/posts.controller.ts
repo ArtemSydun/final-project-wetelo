@@ -67,9 +67,6 @@ export class PostsController {
     const user = await User.findByPk(requestUserId);
     const postToDelete = await PostModel.findByPk(id);
 
-    console.log(user.id)
-    console.log(postToDelete.author)
-
     if (postToDelete.author !== user.id && user.role !== userRole.admin) {
       throw new ForbiddenException('You`re not creator or admin to do this');
     }
