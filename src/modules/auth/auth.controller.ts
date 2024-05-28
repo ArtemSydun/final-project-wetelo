@@ -7,19 +7,23 @@ import {
   ConflictException,
   Request,
   Get,
+  Patch,
+  UseGuards,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
 import { Public } from '../../guards/auth.guard';
 import User from 'src/database/models/users';
 import { SignInDto } from './dtos/sign-user.dto';
-import { AppService } from 'src/app.service';
+import { MailService } from '../mailer/mail.service';
+import { AdminGuard } from 'src/guards/role.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private mailService: AppService,
+    private mailService: MailService,
   ) {}
 
   @Public()
@@ -46,14 +50,18 @@ export class AuthController {
     const admins = await this.authService.getAdminEmails();
 
     for (const admin of admins) {
-      this.mailService.sendMail(admin, user);
+      this.mailService.sendVerificationMail(admin, user);
     }
 
     return user;
   }
 
-  @Get('profile')
-  getProfile(@Request() req) {
-    return User.findOne(req.user.sub);
+  @Patch('verify/:id')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AdminGuard)
+  async verifyUserById(@Param('id') id: string, @Request() req) {
+    await this.authService.verifyUser(id);
+
+    return { message: 'user verificated successfully' };
   }
 }

@@ -7,6 +7,7 @@ import User from './database/models/users';
 import { UsersModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './modules/mailer/mail.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         },
       },
     }),
+    MailModule,
     UsersModule,
     AuthModule,
   ],

@@ -32,6 +32,9 @@ export class User extends Model {
   @Column
   updatedAt: Date;
 
+  @Column
+  verificated: boolean;
+
   @BeforeCreate
   static async hashPassword(instance: User) {
     const salt = await bcrypt.genSalt(10);

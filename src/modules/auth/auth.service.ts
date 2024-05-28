@@ -2,7 +2,7 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import User from 'src/database/models/users';
 import { UsersService } from '../users/user.service';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
 
 @Injectable()
@@ -47,5 +47,21 @@ export class AuthService {
     });
 
     return adminEmails;
+  }
+
+  async verifyUser(userId: string): Promise<void> {
+    const userToVerify = await User.findOne({ where: { id: userId } });
+
+    if (!userToVerify) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (userToVerify.verificated) {
+      throw new ConflictException('User is already verificated');
+    }
+
+    userToVerify.verificated = true;
+
+    await userToVerify.save();
   }
 }

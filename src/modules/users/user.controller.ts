@@ -5,15 +5,19 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 
 import User from 'src/database/models/users';
 import { UsersService } from './user.service';
+import { AdminGuard } from 'src/guards/role.guard';
 
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseGuards(AdminGuard)
   @Get()
   async getUsers(): Promise<User[]> {
     return this.usersService.findAll();
@@ -30,6 +34,11 @@ export class UsersController {
     this.usersService.remove(id);
 
     return { message: 'success' };
+  }
+
+  @Get('profile')
+  getProfile(@Request() req) {
+    return User.findOne(req.user.sub);
   }
 
 }
