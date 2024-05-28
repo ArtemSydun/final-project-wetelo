@@ -47,4 +47,15 @@ export class UsersService {
     await user.destroy();
   }
 
+  async addPostToUser(userId: string, postId: string): Promise<void> {
+    const user = await User.findOne({ where: { id: userId } });
+
+    if (user) {
+      await user.update(
+        { posts: [...(user.posts || []), postId] },
+        { where: { id: userId } },
+      );
+
+    }
+  }
 }

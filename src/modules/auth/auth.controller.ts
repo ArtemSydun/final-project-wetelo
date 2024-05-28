@@ -6,7 +6,6 @@ import {
   HttpStatus,
   ConflictException,
   Request,
-  Get,
   Patch,
   UseGuards,
   Param,

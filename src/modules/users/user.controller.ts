@@ -20,12 +20,12 @@ export class UsersController {
   @UseGuards(AdminGuard)
   @Get()
   async getUsers(): Promise<User[]> {
-    return this.usersService.findAll();
+    return await this.usersService.findAll();
   }
 
   @Get(':id')
   async getUser(@Param('id') id: string): Promise<User> {
-    return this.usersService.findOne(id);
+    return await this.usersService.findOne(id);
   }
 
   @Delete(':id')

@@ -8,6 +8,8 @@ import { UsersModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './modules/mailer/mail.module';
+import { PostsModule } from './modules/posts/posts.module';
+import PostModel from './database/models/posts';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { MailModule } from './modules/mailer/mail.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      models: [User],
+      models: [User, PostModel],
       autoLoadModels: true,
       synchronize: true,
     }),
@@ -40,6 +42,7 @@ import { MailModule } from './modules/mailer/mail.module';
     MailModule,
     UsersModule,
     AuthModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

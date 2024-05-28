@@ -35,6 +35,12 @@ export class User extends Model {
   @Column
   verificated: boolean;
 
+  @Column({
+    type: 'ARRAY',
+    defaultValue: []
+  })
+  posts: string[];
+
   @BeforeCreate
   static async hashPassword(instance: User) {
     const salt = await bcrypt.genSalt(10);
