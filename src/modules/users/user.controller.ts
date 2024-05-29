@@ -23,11 +23,13 @@ export class UsersController {
     return await this.usersService.findAll();
   }
 
+  @UseGuards(AdminGuard)
   @Get(':id')
   async getUser(@Param('id') id: string): Promise<User> {
     return await this.usersService.findOne(id);
   }
 
+  @UseGuards(AdminGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   async deleteUser(@Param('id') id: string): Promise<any> {

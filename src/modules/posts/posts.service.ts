@@ -6,19 +6,21 @@ import { UsersService } from '../users/user.service';
 import { UpdatePostDto } from './dtos/update-post-dto';
 import User from 'src/database/models/users';
 
-
 @Injectable()
 export class PostsService {
   constructor(
     @InjectModel(PostModel)
     private postModel: typeof PostModel,
     private usersService: UsersService,
-  ){}
+  ) {}
 
-  async createPost(createPostDto: CreatePostDto, author: string): Promise<PostModel> {
-    const newPost = await this.postModel.create({ author, ...createPostDto,  });
+  async createPost(
+    createPostDto: CreatePostDto,
+    author: string,
+  ): Promise<PostModel> {
+    const newPost = await this.postModel.create({ author, ...createPostDto });
 
-    this.usersService.addPostToUser(author, newPost.id)
+    this.usersService.addPostToUser(author, newPost.id);
 
     return newPost;
   }
@@ -27,8 +29,13 @@ export class PostsService {
     return await this.postModel.findAll();
   }
 
-  async updatePost(postId: string, updatedFields: UpdatePostDto): Promise<PostModel> {
-    const postToUpdate = await this.postModel.findOne({ where: { id: postId }});
+  async updatePost(
+    postId: string,
+    updatedFields: UpdatePostDto,
+  ): Promise<PostModel> {
+    const postToUpdate = await this.postModel.findOne({
+      where: { id: postId },
+    });
 
     if (postToUpdate) {
       Object.assign(postToUpdate, updatedFields);
@@ -42,17 +49,17 @@ export class PostsService {
     const postToDelete = await this.postModel.findByPk(postId);
 
     if (!postToDelete) {
-        throw new NotFoundException('Post with such id doesn`t exist');
+      throw new NotFoundException('Post with such id doesn`t exist');
     }
 
     await postToDelete.destroy();
 
     const user = await User.findByPk(userId);
     if (user) {
-        user.posts = user.posts.filter(postId => postId !== postId);
-        await user.save();
+      user.posts = user.posts.filter((postId) => postId !== postId);
+      await user.save();
     } else {
-        throw new NotFoundException('User not found');
+      throw new NotFoundException('User not found');
     }
-}
+  }
 }
