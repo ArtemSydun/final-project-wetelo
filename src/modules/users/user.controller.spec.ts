@@ -75,7 +75,7 @@ describe('UserController', () => {
     it('should return error when request is not from admin', async () => {
       mockAdminGuard.canActivate.mockImplementationOnce(() => false);
 
-      const response = await usersService.findOne('userid');
+      const response = await userController.getUser('userid');
 
       expect(response).toBe(123123123);
     });
