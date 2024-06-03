@@ -1,6 +1,5 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dtos/create-user.dto';
 import User from 'src/database/models/users';
 
@@ -31,16 +30,6 @@ export class UsersService {
     return this.userModel.create(createUserDto as any);
   }
 
-  async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.findByEmail(email);
-
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    return user;
-  }
-
   async remove(id: string): Promise<void> {
     const user = await this.findOne(id);
 
@@ -51,11 +40,10 @@ export class UsersService {
     const user = await User.findOne({ where: { id: userId } });
 
     if (user) {
-      await user.update(
+      await User.update(
         { posts: [...(user.posts || []), postId] },
         { where: { id: userId } },
       );
-
     }
   }
 }

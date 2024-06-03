@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import User from './database/models/users';
 import { UsersModule } from './modules/users/user.module';
@@ -44,8 +42,8 @@ import PostModel from './database/models/posts';
     AuthModule,
     PostsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
-  exports: [AppService]
+  controllers: [],
+  providers: [],
+  exports: []
 })
 export class AppModule {}
