@@ -9,7 +9,7 @@ import { CreateUserDto } from '../users/dtos/create-user.dto';
 export class AuthService {
   constructor(private userService: UsersService) {}
 
-  async validateUser(email: string, password: string): Promise<User> {
+  async validateUserPassword(email: string, password: string): Promise<User> {
     const user = await this.userService.findByEmail(email);
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -24,7 +24,7 @@ export class AuthService {
   }
 
   async signIn(email: string, password: string): Promise<any> {
-    const user = await this.validateUser(email, password);
+    const user = await this.validateUserPassword(email, password);
 
     const payload = { email: user.email, sub: user.id };
     const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
