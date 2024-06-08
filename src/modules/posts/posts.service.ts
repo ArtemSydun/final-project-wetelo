@@ -29,6 +29,10 @@ export class PostsService {
     return await this.postModel.findAll();
   }
 
+  async getPostById(id: string): Promise<PostModel> {
+    return await this.postModel.findByPk(id)
+  }
+
   async updatePost(
     postId: string,
     updatedFields: UpdatePostDto,
