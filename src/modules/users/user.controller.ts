@@ -20,13 +20,18 @@ export class UsersController {
   @UseGuards(AdminGuard)
   @Get()
   async getUsers(): Promise<User[]> {
-    return await this.usersService.findAll();
+    return await this.usersService.findAllUsers();
+  }
+  
+  @Get('profile')
+  getProfile(@Request() req) {
+    return this.usersService.findUserById(req.user.sub);
   }
 
   @UseGuards(AdminGuard)
   @Get(':id')
   async getUser(@Param('id') id: string): Promise<User> {
-    return await this.usersService.findOne(id);
+    return await this.usersService.findUserById(id);
   }
 
   @UseGuards(AdminGuard)
@@ -37,10 +42,4 @@ export class UsersController {
 
     return { message: 'success' };
   }
-
-  @Get('profile')
-  getProfile(@Request() req) {
-    return User.findOne(req.user.sub);
-  }
-
 }

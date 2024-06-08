@@ -18,10 +18,14 @@ import { UpdatePostDto } from './dtos/update-post-dto';
 import { Public } from 'src/guards/auth.guard';
 import User from 'src/database/models/users';
 import { userRole } from 'src/helpers/userRoles';
+import { UsersService } from '../users/user.service';
 
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postService: PostsService) {}
+  constructor(
+    private readonly postService: PostsService,
+    private readonly userService: UsersService,
+  ) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
@@ -49,7 +53,7 @@ export class PostsController {
     @Request() req,
   ) {
     const requestUserId = req.user.sub;
-    const postToUpdate = await PostModel.findByPk(id);
+    const postToUpdate = await this.postService.getPostById(id);
 
     if (postToUpdate.author !== requestUserId) {
       throw new ForbiddenException('You`re not creator to do this');
@@ -59,13 +63,10 @@ export class PostsController {
 
   @HttpCode(HttpStatus.OK)
   @Delete(':id')
-  async deletePostById(
-    @Param('id') id: string,
-    @Request() req,
-  ) {
+  async deletePostById(@Param('id') id: string, @Request() req) {
     const requestUserId = req.user.sub;
-    const user = await User.findByPk(requestUserId);
-    const postToDelete = await PostModel.findByPk(id);
+    const user = await this.userService.findUserById(requestUserId);
+    const postToDelete = await this.postService.getPostById(id);
 
     if (postToDelete.author !== user.id && user.role !== userRole.admin) {
       throw new ForbiddenException('You`re not creator or admin to do this');
